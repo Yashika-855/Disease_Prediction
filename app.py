@@ -4,8 +4,6 @@ import pickle
 import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.patches import FancyBboxPatch
-import matplotlib.gridspec as gridspec
 
 # -----------------------------
 # Page Config
@@ -18,231 +16,176 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Gorgeous CSS Theme
+# CSS — Subtle, Clean, Professional
 # -----------------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@500;600&display=swap');
 
-* { font-family: 'DM Sans', sans-serif; }
+* { font-family: 'Inter', sans-serif; box-sizing: border-box; }
 
-/* ---- Background ---- */
+/* Background — soft slate, not harsh black */
 .stApp {
-    background: linear-gradient(135deg, #020817 0%, #0c1445 40%, #0a1628 100%);
+    background-color: #f1f5f9;
     min-height: 100vh;
 }
 
-/* ---- Remove default padding ---- */
-.block-container { padding: 2rem 3rem 3rem 3rem !important; max-width: 1300px !important; }
+.block-container {
+    padding: 2.5rem 3.5rem !important;
+    max-width: 1200px !important;
+}
 
-/* ---- Headings ---- */
-h1 { font-family: 'Syne', sans-serif !important; font-weight: 800 !important; letter-spacing: -1px; }
-h2, h3 { font-family: 'Syne', sans-serif !important; font-weight: 700 !important; }
-
-/* ---- Hero Banner ---- */
-.hero-banner {
-    background: linear-gradient(120deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
-    border: 1px solid rgba(56, 189, 248, 0.25);
-    border-radius: 24px;
-    padding: 3rem 3.5rem;
+/* Hero */
+.hero {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 2.5rem 3rem;
     margin-bottom: 2rem;
-    position: relative;
-    overflow: hidden;
-}
-.hero-banner::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
-    border-radius: 50%;
-}
-.hero-banner::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    left: 20%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 70%);
-    border-radius: 50%;
+    border-left: 4px solid #4f7cac;
 }
 .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 3.2rem;
-    font-weight: 800;
-    background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-    line-height: 1.1;
+    font-family: 'Lora', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 0.4rem 0;
+    letter-spacing: -0.5px;
 }
 .hero-sub {
-    color: #94a3b8;
-    font-size: 1.1rem;
-    margin-top: 0.75rem;
-    font-weight: 300;
-    letter-spacing: 0.3px;
+    color: #64748b;
+    font-size: 0.97rem;
+    font-weight: 400;
+    margin: 0;
 }
-.hero-badges {
-    display: flex;
-    gap: 0.7rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-}
-.badge {
-    background: rgba(56,189,248,0.12);
-    border: 1px solid rgba(56,189,248,0.3);
-    color: #38bdf8;
-    border-radius: 100px;
-    padding: 0.3rem 1rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-}
-.badge.purple { background: rgba(129,140,248,0.12); border-color: rgba(129,140,248,0.3); color: #818cf8; }
-.badge.pink   { background: rgba(192,132,252,0.12); border-color: rgba(192,132,252,0.3); color: #c084fc; }
 
-/* ---- Section Cards ---- */
-.section-card {
-    background: linear-gradient(145deg, rgba(15,23,42,0.9), rgba(30,41,59,0.6));
-    border: 1px solid rgba(56,189,248,0.15);
-    border-radius: 20px;
-    padding: 2rem;
-    margin-bottom: 1.5rem;
-    backdrop-filter: blur(10px);
-}
-.section-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 2.5px;
+/* Section heading */
+.section-heading {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    color: #38bdf8;
-    margin-bottom: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-/* ---- Sliders ---- */
-.stSlider > div > div > div > div { background: linear-gradient(90deg, #06b6d4, #6366f1) !important; }
-.stSlider [data-baseweb="thumb"] { background: white !important; border: 3px solid #38bdf8 !important; }
-.stSlider label { color: #cbd5e1 !important; font-weight: 500; font-size: 0.92rem; }
+/* Input labels */
+.stSlider label,
+.stSelectbox label {
+    color: #475569 !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
 
-/* ---- Selectboxes ---- */
-.stSelectbox label { color: #cbd5e1 !important; font-weight: 500; font-size: 0.92rem; }
+/* Sliders */
+.stSlider > div > div > div > div {
+    background: #4f7cac !important;
+}
+.stSlider [data-baseweb="thumb"] {
+    background: #ffffff !important;
+    border: 2px solid #4f7cac !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
+}
+
+/* Selectboxes */
 .stSelectbox > div > div {
-    background: rgba(15,23,42,0.8) !important;
-    border: 1px solid rgba(56,189,248,0.25) !important;
-    border-radius: 12px !important;
-    color: white !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    color: #1e293b !important;
 }
 
-/* ---- Buttons ---- */
+/* Primary button */
 .stButton > button {
-    background: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #8b5cf6 100%) !important;
-    color: white !important;
+    background: #4f7cac !important;
+    color: #ffffff !important;
     border: none !important;
-    border-radius: 14px !important;
-    height: 3.5em !important;
-    font-family: 'Syne', sans-serif !important;
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.5px !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 20px rgba(99,102,241,0.35) !important;
+    border-radius: 8px !important;
+    height: 3em !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    box-shadow: 0 1px 3px rgba(79,124,172,0.3) !important;
+    transition: background 0.2s ease !important;
 }
 .stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 30px rgba(99,102,241,0.55) !important;
+    background: #3b6899 !important;
 }
 
-/* Reset button variant */
+/* Reset button */
 .reset-btn > button {
-    background: rgba(239,68,68,0.15) !important;
-    border: 1px solid rgba(239,68,68,0.4) !important;
-    color: #f87171 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #64748b !important;
     box-shadow: none !important;
 }
-.reset-btn > button:hover { background: rgba(239,68,68,0.25) !important; box-shadow: none !important; }
+.reset-btn > button:hover {
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+    background: #f8fafc !important;
+}
 
-/* ---- Metric Cards ---- */
+/* Divider */
+hr { border-color: #e2e8f0 !important; margin: 1.5rem 0 !important; }
+
+/* Metric cards */
 .metric-card {
-    background: linear-gradient(145deg, rgba(6,182,212,0.12), rgba(99,102,241,0.08));
-    border: 1px solid rgba(56,189,248,0.3);
-    border-radius: 18px;
-    padding: 1.8rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-.metric-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #06b6d4, #6366f1);
-    border-radius: 18px 18px 0 0;
-}
-.metric-label { color: #64748b; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
-.metric-value { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; color: #38bdf8; line-height: 1.1; margin: 0.3rem 0; }
-.metric-sub   { color: #475569; font-size: 0.8rem; }
-
-.risk-high {
-    background: linear-gradient(145deg, rgba(239,68,68,0.15), rgba(220,38,38,0.08));
-    border-color: rgba(239,68,68,0.4);
-}
-.risk-high::before { background: linear-gradient(90deg, #ef4444, #dc2626); }
-.risk-high .metric-value { color: #f87171; }
-
-.risk-low {
-    background: linear-gradient(145deg, rgba(34,197,94,0.15), rgba(22,163,74,0.08));
-    border-color: rgba(34,197,94,0.4);
-}
-.risk-low::before { background: linear-gradient(90deg, #22c55e, #16a34a); }
-.risk-low .metric-value { color: #4ade80; }
-
-/* ---- Divider ---- */
-hr { border-color: rgba(56,189,248,0.12) !important; }
-
-/* ---- General text ---- */
-p, label { color: #94a3b8 !important; }
-
-/* ---- Info box ---- */
-.info-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-.info-pill {
-    background: rgba(56,189,248,0.08);
-    border: 1px solid rgba(56,189,248,0.15);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 0.9rem 1.3rem;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
+    padding: 1.75rem 2rem;
+    border-top: 3px solid #4f7cac;
 }
-.info-pill .icon { font-size: 1.5rem; }
-.info-pill .text { font-size: 0.82rem; color: #64748b; line-height: 1.4; }
-.info-pill .text strong { color: #94a3b8; display: block; font-size: 0.87rem; margin-bottom: 2px; }
+.metric-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+}
+.metric-value {
+    font-family: 'Lora', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.15;
+}
+.metric-sub {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 0.3rem;
+}
 
-/* ---- Step indicator ---- */
-.step-row { display: flex; gap: 0.5rem; margin-bottom: 1.8rem; align-items: center; }
-.step-dot {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: linear-gradient(135deg, #06b6d4, #6366f1);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: white;
-    flex-shrink: 0;
+.risk-high { border-top-color: #e05252; }
+.risk-high .metric-value { color: #c0392b; }
+
+.risk-low  { border-top-color: #4caf84; }
+.risk-low  .metric-value { color: #2e7d5e; }
+
+/* Recommendation cards */
+.tip-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
 }
-.step-line { flex: 1; height: 1px; background: rgba(56,189,248,0.15); }
-.step-label { color: #475569; font-size: 0.78rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+.tip-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.3rem;
+}
+.tip-body {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.55;
+}
+
+/* General text */
+p, label { color: #475569 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -252,7 +195,7 @@ p, label { color: #94a3b8 !important; }
 # -----------------------------
 def load_model(file):
     if not os.path.exists(file):
-        st.error(f"❌ Missing file: `{file}` — please ensure all model files are present.")
+        st.error(f"Missing file: `{file}`. Ensure all model files are present.")
         st.stop()
     return pickle.load(open(file, "rb"))
 
@@ -262,109 +205,68 @@ scaler = load_model("scaler.pkl")
 
 
 # -----------------------------
-# Hero Section
+# Hero
 # -----------------------------
 st.markdown("""
-<div class="hero-banner">
+<div class="hero">
     <p class="hero-title">MediPredict AI</p>
-    <p class="hero-sub">Intelligent health cost estimation & disease risk assessment powered by machine learning</p>
-    <div class="hero-badges">
-        <span class="badge">🤖 ML-Powered</span>
-        <span class="badge purple">📊 Real-time Analysis</span>
-        <span class="badge pink">🔒 Privacy First</span>
-    </div>
+    <p class="hero-sub">Predict estimated medical costs and disease risk based on your health profile.</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Info Pills
-st.markdown("""
-<div class="info-row">
-    <div class="info-pill">
-        <span class="icon">💊</span>
-        <div class="text"><strong>Medical Cost Prediction</strong>Estimate annual healthcare expenditure based on your profile</div>
-    </div>
-    <div class="info-pill">
-        <span class="icon">🧬</span>
-        <div class="text"><strong>Disease Risk Scoring</strong>Assess likelihood of developing conditions using clinical indicators</div>
-    </div>
-    <div class="info-pill">
-        <span class="icon">⚡</span>
-        <div class="text"><strong>Instant Results</strong>Get predictions in seconds with detailed visual breakdown</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("---")
 
 # -----------------------------
-# Step 1 — Personal Info
+# Section 1 — Personal Details
 # -----------------------------
-st.markdown("""
-<div class="step-row">
-    <div class="step-dot">1</div>
-    <div class="step-line"></div>
-    <span class="step-label">Personal Information</span>
-</div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="section-heading">Personal Details</div>', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    age      = st.slider("🎂 Age", 0, 100, 25)
+    age      = st.slider("Age", 0, 100, 25)
 with col2:
-    bmi      = st.slider("⚖️ BMI", 10.0, 50.0, 22.0, step=0.1)
+    bmi      = st.slider("BMI", 10.0, 50.0, 22.0, step=0.1)
 with col3:
-    children = st.slider("👨‍👩‍👧 Children", 0, 5, 0)
+    children = st.slider("Number of Children", 0, 5, 0)
 
 col4, col5, col6 = st.columns(3)
 with col4:
-    gender   = st.selectbox("👤 Gender",   ["Male", "Female"])
+    gender   = st.selectbox("Gender",         ["Male", "Female"])
 with col5:
-    smoker   = st.selectbox("🚬 Smoker",   ["No", "Yes"])
+    smoker   = st.selectbox("Smoker",          ["No", "Yes"])
 with col6:
-    activity = st.selectbox("🏃 Activity Level", ["Low", "Medium", "High"])
+    activity = st.selectbox("Activity Level",  ["Low", "Medium", "High"])
 
-st.markdown("---")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 2 — Coverage & Location
+# Section 2 — Coverage & Location
 # -----------------------------
-st.markdown("""
-<div class="step-row">
-    <div class="step-dot">2</div>
-    <div class="step-line"></div>
-    <span class="step-label">Coverage & Location</span>
-</div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="section-heading">Coverage & Location</div>', unsafe_allow_html=True)
 
-col7, col8 = st.columns(2)
+col7, col8, _ = st.columns([1, 1, 1])
 with col7:
-    insurance = st.selectbox("🛡️ Insurance Plan", ["Basic", "Premium"])
+    insurance = st.selectbox("Insurance Plan", ["Basic", "Premium"])
 with col8:
-    city      = st.selectbox("🏙️ City Type",       ["Urban", "Semi-Urban", "Rural"])
+    city      = st.selectbox("City Type",      ["Urban", "Semi-Urban", "Rural"])
 
-st.markdown("---")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 3 — Medical History
+# Section 3 — Medical History
 # -----------------------------
-st.markdown("""
-<div class="step-row">
-    <div class="step-dot">3</div>
-    <div class="step-line"></div>
-    <span class="step-label">Medical History</span>
-</div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="section-heading">Medical History</div>', unsafe_allow_html=True)
 
 col9, col10, col11, col12 = st.columns(4)
 with col9:
-    diabetes      = st.selectbox("🩸 Diabetes",      [0, 1])
+    diabetes     = st.selectbox("Diabetes",      [0, 1], format_func=lambda x: "Yes" if x else "No")
 with col10:
-    hypertension  = st.selectbox("💓 Hypertension",  [0, 1])
+    hypertension = st.selectbox("Hypertension",  [0, 1], format_func=lambda x: "Yes" if x else "No")
 with col11:
-    heart         = st.selectbox("❤️ Heart Disease", [0, 1])
+    heart        = st.selectbox("Heart Disease", [0, 1], format_func=lambda x: "Yes" if x else "No")
 with col12:
-    asthma        = st.selectbox("🫁 Asthma",        [0, 1])
+    asthma       = st.selectbox("Asthma",        [0, 1], format_func=lambda x: "Yes" if x else "No")
 
+st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("---")
 
 # -----------------------------
@@ -379,231 +281,220 @@ city_enc      = {"Urban": 0, "Semi-Urban": 1, "Rural": 2}[city]
 # -----------------------------
 # Action Buttons
 # -----------------------------
-btn_col1, btn_col2, btn_col3 = st.columns([3, 1, 1])
+btn1, btn2, btn3, _ = st.columns([2, 1.2, 0.9, 1.5])
 
-with btn_col1:
-    predict_clicked = st.button("🚀 Run Full Prediction Analysis", use_container_width=True)
-with btn_col2:
-    cost_only = st.button("💰 Cost Only", use_container_width=True)
-with btn_col3:
-    with st.container():
-        st.markdown('<div class="reset-btn">', unsafe_allow_html=True)
-        reset = st.button("🔄 Reset", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+with btn1:
+    predict_clicked = st.button("Run Full Prediction", use_container_width=True)
+with btn2:
+    cost_only = st.button("Estimate Cost Only", use_container_width=True)
+with btn3:
+    st.markdown('<div class="reset-btn">', unsafe_allow_html=True)
+    reset = st.button("Reset", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 # -----------------------------
-# Prediction Logic
+# Prediction
 # -----------------------------
 def get_prediction():
-    input_data = np.array([[
+    data = np.array([[
         age, gender_enc, bmi, children, smoker_enc,
         activity_enc, insurance_enc, city_enc,
         diabetes, hypertension, heart, asthma
     ]])
-    input_scaled = scaler.transform(input_data)
-    cost    = reg.predict(input_scaled)[0]
-    disease = clf.predict(input_scaled)[0]
-    return cost, disease, input_scaled
+    scaled  = scaler.transform(data)
+    cost    = reg.predict(scaled)[0]
+    disease = clf.predict(scaled)[0]
+    return cost, disease, scaled
+
 
 if predict_clicked or cost_only:
-    cost, disease, input_scaled = get_prediction()
+    cost, disease, _ = get_prediction()
 
     st.markdown("---")
-    st.markdown("""
-    <div class="step-row">
-        <div class="step-dot">✓</div>
-        <div class="step-line"></div>
-        <span class="step-label">Prediction Results</span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="section-heading">Results</div>', unsafe_allow_html=True)
 
-    # --- Metric Cards ---
+    # Metric cards
     if predict_clicked:
-        m1, m2 = st.columns(2)
+        mc1, mc2 = st.columns(2)
     else:
-        m1, _ = st.columns([1, 1])
+        mc1, mc2 = st.columns([1, 1])
 
-    with m1:
+    with mc1:
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-label">💰 Estimated Annual Cost</div>
-            <div class="metric-value">₹ {cost:,.0f}</div>
-            <div class="metric-sub">Based on your health & demographic profile</div>
+            <div class="metric-label">Estimated Annual Medical Cost</div>
+            <div class="metric-value">&#8377; {cost:,.0f}</div>
+            <div class="metric-sub">Based on your demographic and health profile</div>
         </div>
         """, unsafe_allow_html=True)
 
     if predict_clicked:
-        with m2:
-            risk_class = "risk-high" if disease == 1 else "risk-low"
-            risk_icon  = "⚠️" if disease == 1 else "✅"
-            risk_label = "HIGH RISK" if disease == 1 else "LOW RISK"
-            risk_sub   = "Consult a specialist soon" if disease == 1 else "Keep up the healthy habits!"
+        with mc2:
+            rc    = "risk-high" if disease == 1 else "risk-low"
+            rlbl  = "High Risk" if disease == 1 else "Low Risk"
+            rsub  = "We recommend consulting a specialist." if disease == 1 else "Your profile indicates a low disease risk."
             st.markdown(f"""
-            <div class="metric-card {risk_class}">
-                <div class="metric-label">{risk_icon} Disease Risk Level</div>
-                <div class="metric-value">{risk_label}</div>
-                <div class="metric-sub">{risk_sub}</div>
+            <div class="metric-card {rc}">
+                <div class="metric-label">Disease Risk Assessment</div>
+                <div class="metric-value">{rlbl}</div>
+                <div class="metric-sub">{rsub}</div>
             </div>
             """, unsafe_allow_html=True)
 
-    # --- Charts ---
+    # Charts
     st.markdown("<br>", unsafe_allow_html=True)
 
-    chart_col1, chart_col2 = st.columns(2)
+    BG   = "#ffffff"
+    AX   = "#f8fafc"
+    GRID = "#e2e8f0"
+    TEXT = "#64748b"
+    BLUE = "#4f7cac"
 
-    # Chart 1: Feature Overview Radar-style Bar
-    with chart_col1:
-        fig, ax = plt.subplots(figsize=(6, 4))
-        fig.patch.set_facecolor('#0f172a')
-        ax.set_facecolor('#0f172a')
+    ch1, ch2 = st.columns(2)
+
+    # Chart 1 — Profile snapshot
+    with ch1:
+        fig, ax = plt.subplots(figsize=(5.5, 3.8))
+        fig.patch.set_facecolor(BG)
+        ax.set_facecolor(AX)
 
         features = ["Age", "BMI", "Children", "Activity"]
-        raw_vals = [age, bmi, children, activity_enc]
-        colors   = ["#38bdf8", "#818cf8", "#c084fc", "#34d399"]
+        vals     = [age, bmi, children, activity_enc]
+        palette  = ["#4f7cac", "#6b9bc4", "#84b4d4", "#a8cce0"]
 
-        bars = ax.bar(features, raw_vals, color=colors, width=0.55, zorder=3,
-                      edgecolor='none', linewidth=0)
-        for bar, val in zip(bars, raw_vals):
+        bars = ax.bar(features, vals, color=palette, width=0.5, zorder=3, edgecolor='none')
+        for bar, v in zip(bars, vals):
             ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.3,
-                    str(round(val, 1)), ha='center', va='bottom',
-                    color='white', fontsize=10, fontweight='bold')
+                    str(round(v, 1)), ha='center', va='bottom',
+                    color='#334155', fontsize=9, fontweight='600')
 
-        ax.set_title("Patient Profile Snapshot", color='#94a3b8', fontsize=11,
-                     pad=12, fontweight='600')
-        ax.tick_params(colors='#64748b', labelsize=9)
+        ax.set_title("Patient Profile Overview", color=TEXT, fontsize=10, pad=10, fontweight='600')
+        ax.tick_params(colors=TEXT, labelsize=8.5)
         ax.spines[:].set_visible(False)
-        ax.set_ylim(0, max(raw_vals) * 1.25 + 2)
+        ax.set_ylim(0, max(vals) * 1.3 + 2)
         ax.yaxis.set_visible(False)
-        ax.grid(axis='y', color='#1e293b', linestyle='--', alpha=0.5, zorder=0)
+        ax.grid(axis='y', color=GRID, linestyle='-', linewidth=0.8, zorder=0)
         fig.tight_layout()
         st.pyplot(fig)
 
-    # Chart 2: Risk Factor Heatmap
-    with chart_col2:
-        fig2, ax2 = plt.subplots(figsize=(6, 4))
-        fig2.patch.set_facecolor('#0f172a')
-        ax2.set_facecolor('#0f172a')
+    # Chart 2 — Condition flags
+    with ch2:
+        fig2, ax2 = plt.subplots(figsize=(5.5, 3.8))
+        fig2.patch.set_facecolor(BG)
+        ax2.set_facecolor(AX)
 
-        conditions  = ["Diabetes", "Hypertension", "Heart", "Asthma", "Smoker"]
-        cond_values = [diabetes, hypertension, heart, asthma, smoker_enc]
-        bar_colors  = ["#ef4444" if v else "#22c55e" for v in cond_values]
+        conditions  = ["Diabetes", "Hypertension", "Heart Disease", "Asthma", "Smoker"]
+        cond_vals   = [diabetes, hypertension, heart, asthma, smoker_enc]
+        bar_colors  = ["#c0392b" if v else "#4caf84" for v in cond_vals]
 
-        hbars = ax2.barh(conditions, cond_values, color=bar_colors, height=0.45,
-                         zorder=3, edgecolor='none')
-        for bar, val in zip(hbars, cond_values):
-            label = "Present" if val else "Absent"
-            ax2.text(val + 0.02, bar.get_y() + bar.get_height()/2,
-                     label, va='center', color='white', fontsize=9, fontweight='600')
+        hbars = ax2.barh(conditions, cond_vals, color=bar_colors, height=0.4, zorder=3, edgecolor='none')
+        for bar, v in zip(hbars, cond_vals):
+            lbl = "Present" if v else "Absent"
+            ax2.text(v + 0.03, bar.get_y() + bar.get_height()/2,
+                     lbl, va='center', color='#334155', fontsize=8.5, fontweight='500')
 
-        ax2.set_title("Medical Condition Flags", color='#94a3b8', fontsize=11,
-                      pad=12, fontweight='600')
-        ax2.set_xlim(0, 1.4)
-        ax2.tick_params(colors='#64748b', labelsize=9)
+        ax2.set_title("Medical Condition Status", color=TEXT, fontsize=10, pad=10, fontweight='600')
+        ax2.set_xlim(0, 1.5)
+        ax2.tick_params(colors=TEXT, labelsize=8.5)
         ax2.spines[:].set_visible(False)
         ax2.xaxis.set_visible(False)
 
-        legend_elements = [
-            mpatches.Patch(color='#ef4444', label='Present'),
-            mpatches.Patch(color='#22c55e', label='Absent')
+        legend_els = [
+            mpatches.Patch(color='#c0392b', label='Present'),
+            mpatches.Patch(color='#4caf84', label='Absent')
         ]
-        ax2.legend(handles=legend_elements, loc='lower right',
-                   facecolor='#1e293b', edgecolor='none',
-                   labelcolor='#94a3b8', fontsize=8)
+        ax2.legend(handles=legend_els, loc='lower right',
+                   facecolor='#f8fafc', edgecolor='#e2e8f0',
+                   labelcolor=TEXT, fontsize=8)
         fig2.tight_layout()
         st.pyplot(fig2)
 
-    # --- Cost Breakdown Donut ---
+    # Charts 3 & 4 — full prediction only
     if predict_clicked:
         st.markdown("<br>", unsafe_allow_html=True)
-        d_col1, d_col2 = st.columns([1, 1])
+        dc1, dc2 = st.columns(2)
 
-        with d_col1:
-            fig3, ax3 = plt.subplots(figsize=(5, 4))
-            fig3.patch.set_facecolor('#0f172a')
-            ax3.set_facecolor('#0f172a')
+        with dc1:
+            fig3, ax3 = plt.subplots(figsize=(5, 3.8))
+            fig3.patch.set_facecolor(BG)
+            ax3.set_facecolor(BG)
 
-            # Simulated cost breakdown
-            base         = age * 100
-            bmi_contrib  = bmi * 80
-            smoker_cost  = 4000 if smoker_enc else 0
-            disease_cost = (diabetes + hypertension + heart + asthma) * 1200
-            remainder    = max(cost - base - bmi_contrib - smoker_cost - disease_cost, 500)
+            base_c   = age * 100
+            bmi_c    = bmi * 80
+            smk_c    = 4000 if smoker_enc else 0
+            cond_c   = (diabetes + hypertension + heart + asthma) * 1200
+            rem_c    = max(cost - base_c - bmi_c - smk_c - cond_c, 500)
 
-            sizes  = [base, bmi_contrib, smoker_cost, disease_cost, remainder]
-            labels = ["Age Factor", "BMI Factor", "Smoking", "Conditions", "Base Premium"]
-            colors = ["#38bdf8", "#818cf8", "#ef4444", "#f97316", "#22c55e"]
-            explode = [0.04]*5
+            sizes  = [base_c, bmi_c, smk_c, cond_c, rem_c]
+            labels = ["Age", "BMI", "Smoking", "Conditions", "Base"]
+            colors = ["#4f7cac", "#84b4d4", "#e05252", "#f0a04b", "#4caf84"]
 
-            wedges, texts, autotexts = ax3.pie(
+            wedges, _, autotexts = ax3.pie(
                 sizes, labels=None, autopct='%1.0f%%', startangle=140,
-                colors=colors, explode=explode,
-                wedgeprops=dict(width=0.55, edgecolor='#0f172a', linewidth=2),
+                colors=colors, explode=[0.03]*5,
+                wedgeprops=dict(width=0.55, edgecolor='white', linewidth=1.5),
                 pctdistance=0.78,
-                textprops=dict(color='white', fontsize=8, fontweight='bold')
+                textprops=dict(color='#334155', fontsize=8, fontweight='600')
             )
-            ax3.set_title("Cost Breakdown Estimate", color='#94a3b8', fontsize=11,
-                          pad=12, fontweight='600')
-            legend = ax3.legend(wedges, labels, loc="lower center",
-                                bbox_to_anchor=(0.5, -0.18), ncol=3,
-                                facecolor='#1e293b', edgecolor='none',
-                                labelcolor='#94a3b8', fontsize=7.5)
+            ax3.set_title("Cost Factor Breakdown", color=TEXT, fontsize=10, pad=10, fontweight='600')
+            ax3.legend(wedges, labels, loc="lower center",
+                       bbox_to_anchor=(0.5, -0.15), ncol=3,
+                       facecolor='#f8fafc', edgecolor='#e2e8f0',
+                       labelcolor=TEXT, fontsize=7.5)
             fig3.tight_layout()
             st.pyplot(fig3)
 
-        with d_col2:
-            # Insurance vs Actual Cost gauge-style
-            fig4, ax4 = plt.subplots(figsize=(5, 4))
-            fig4.patch.set_facecolor('#0f172a')
-            ax4.set_facecolor('#0f172a')
+        with dc2:
+            fig4, ax4 = plt.subplots(figsize=(5, 3.8))
+            fig4.patch.set_facecolor(BG)
+            ax4.set_facecolor(AX)
 
-            coverage_pct = 60 if insurance_enc == 0 else 85
-            out_of_pocket = cost * (1 - coverage_pct/100)
+            coverage_pct  = 60 if insurance_enc == 0 else 85
+            out_of_pocket = cost * (1 - coverage_pct / 100)
 
-            cats   = ["Total Cost", "Covered", "Out of Pocket"]
-            vals   = [cost, cost * coverage_pct/100, out_of_pocket]
-            cols   = ["#38bdf8", "#22c55e", "#f97316"]
+            cats  = ["Total Cost", "Covered", "Out of Pocket"]
+            vals4 = [cost, cost * coverage_pct / 100, out_of_pocket]
+            cols4 = [BLUE, "#4caf84", "#e05252"]
 
-            bars2 = ax4.bar(cats, vals, color=cols, width=0.5, zorder=3, edgecolor='none')
-            for bar, val in zip(bars2, vals):
-                ax4.text(bar.get_x() + bar.get_width()/2, bar.get_height() + cost*0.01,
-                         f"₹{val:,.0f}", ha='center', va='bottom',
-                         color='white', fontsize=8, fontweight='bold')
+            bars4 = ax4.bar(cats, vals4, color=cols4, width=0.45, zorder=3, edgecolor='none')
+            for bar, v in zip(bars4, vals4):
+                ax4.text(bar.get_x() + bar.get_width()/2, bar.get_height() + cost * 0.01,
+                         f"\u20b9{v:,.0f}", ha='center', va='bottom',
+                         color='#334155', fontsize=8, fontweight='600')
 
-            ax4.set_title(f"Coverage Breakdown ({coverage_pct}% covered)",
-                          color='#94a3b8', fontsize=11, pad=12, fontweight='600')
-            ax4.tick_params(colors='#64748b', labelsize=9)
+            ax4.set_title(f"Coverage Breakdown  ({coverage_pct}% covered)", color=TEXT,
+                          fontsize=10, pad=10, fontweight='600')
+            ax4.tick_params(colors=TEXT, labelsize=8.5)
             ax4.spines[:].set_visible(False)
             ax4.yaxis.set_visible(False)
-            ax4.set_ylim(0, max(vals) * 1.25)
+            ax4.set_ylim(0, max(vals4) * 1.25)
+            ax4.grid(axis='y', color=GRID, linestyle='-', linewidth=0.8, zorder=0)
             fig4.tight_layout()
             st.pyplot(fig4)
 
-    # --- Recommendations ---
+    # Recommendations
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("---")
-    st.markdown("""
-    <div class="step-row">
-        <div class="step-dot">💡</div>
-        <div class="step-line"></div>
-        <span class="step-label">Personalised Recommendations</span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="section-heading">Recommendations</div>', unsafe_allow_html=True)
 
     tips = []
-    if smoker_enc: tips.append(("🚭", "Quit Smoking", "Smoking significantly raises costs & disease risk. Seek cessation support."))
-    if bmi > 30:   tips.append(("🥗", "Manage BMI", f"Your BMI of {bmi:.1f} is above healthy range. A dietitian can help."))
-    if age > 50:   tips.append(("🩺", "Annual Check-ups", "Regular screenings are critical after 50. Schedule today."))
-    if diabetes:   tips.append(("💉", "Diabetes Management", "Monitor blood sugar and follow your medication plan closely."))
-    if heart:      tips.append(("❤️", "Cardiac Care", "Maintain a heart-healthy lifestyle — low sodium, moderate exercise."))
-    if not tips:   tips.append(("🌟", "Great Profile!", "You appear to be in good health. Keep it up!"))
+    if smoker_enc:   tips.append(("Smoking Cessation",    "Smoking is a significant driver of both medical cost and disease risk. Consider cessation programmes."))
+    if bmi > 30:     tips.append(("Weight Management",    f"A BMI of {bmi:.1f} is above the healthy range. Dietary adjustments and regular exercise can help."))
+    if age > 50:     tips.append(("Routine Screenings",   "Annual health screenings are strongly advised for individuals above 50."))
+    if diabetes:     tips.append(("Diabetes Care",        "Maintain consistent blood glucose monitoring and adhere to your prescribed medication schedule."))
+    if hypertension: tips.append(("Blood Pressure Control","Reduce sodium intake, manage stress, and follow your physician's treatment plan."))
+    if heart:        tips.append(("Cardiac Health",       "Maintain a low-sodium, heart-healthy diet and engage in moderate physical activity as advised."))
+    if asthma:       tips.append(("Respiratory Care",     "Keep rescue medication accessible and avoid known environmental triggers."))
+    if not tips:     tips.append(("Healthy Profile",      "Your current profile indicates low risk. Maintain a balanced diet, regular exercise, and annual check-ups."))
 
     tip_cols = st.columns(min(len(tips), 3))
-    for i, (icon, title, body) in enumerate(tips):
+    for i, (title, body) in enumerate(tips):
         with tip_cols[i % 3]:
             st.markdown(f"""
-            <div class="section-card" style="text-align:center; padding:1.5rem;">
-                <div style="font-size:2rem; margin-bottom:0.5rem;">{icon}</div>
-                <div style="font-family:'Syne',sans-serif; font-weight:700; color:#e2e8f0; font-size:0.95rem; margin-bottom:0.4rem;">{title}</div>
-                <div style="color:#64748b; font-size:0.82rem; line-height:1.5;">{body}</div>
+            <div class="tip-card">
+                <div class="tip-title">{title}</div>
+                <div class="tip-body">{body}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -612,7 +503,7 @@ if predict_clicked or cost_only:
 # Footer
 st.markdown("""
 <br><br>
-<div style="text-align:center; color:#1e293b; font-size:0.75rem; letter-spacing:1px;">
-    MEDIPREDICT AI &nbsp;·&nbsp; FOR EDUCATIONAL USE ONLY &nbsp;·&nbsp; NOT A MEDICAL DIAGNOSIS
+<div style="text-align:center; color:#cbd5e1; font-size:0.72rem; letter-spacing:1px;">
+    MEDIPREDICT AI &nbsp;&middot;&nbsp; FOR EDUCATIONAL USE ONLY &nbsp;&middot;&nbsp; NOT A SUBSTITUTE FOR MEDICAL ADVICE
 </div>
 """, unsafe_allow_html=True)
