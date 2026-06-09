@@ -268,9 +268,21 @@ def load_models():
     clf    = pickle.load(open("clf_model.pkl","rb"))
     scaler = pickle.load(open("scaler.pkl","rb"))
     n_feat = scaler.n_features_in_
-    return reg, clf, scaler, n_feat
 
-reg, clf, scaler, N_FEATURES = load_models()
+    # Detect which class label the model uses for "disease present"
+    # Models trained with 0=healthy,1=disease OR 1=healthy,0=disease both handled
+    classes = list(clf.classes_) if hasattr(clf, 'classes_') else [0, 1]
+    # HIGH risk label = whichever class is NOT the majority / not 0
+    # We trust: if classes are [0,1] → 1 means disease (standard)
+    # predict_proba col index for disease=1
+    if 1 in classes:
+        high_risk_label = 1
+    else:
+        high_risk_label = classes[-1]   # fallback: last class
+
+    return reg, clf, scaler, n_feat, high_risk_label
+
+reg, clf, scaler, N_FEATURES, HIGH_RISK_LABEL = load_models()
 
 
 # ─────────────────────────────────────────
@@ -561,9 +573,20 @@ elif s.slide == 3:
                     s.smoker, s.activity, s.insurance, s.city,
                     s.diabetes, s.hypertension, s.heart, s.asthma
                 )
-                scaled    = scaler.transform(inp)
-                s.cost    = float(reg.predict(scaled)[0])
-                s.disease = int(clf.predict(scaled)[0])
+                scaled = scaler.transform(inp)
+                s.cost = float(reg.predict(scaled)[0])
+
+                # Robust disease label: use predict_proba to avoid label inversion bugs
+                if hasattr(clf, 'predict_proba'):
+                    proba   = clf.predict_proba(scaled)[0]
+                    classes = list(clf.classes_)
+                    idx     = classes.index(HIGH_RISK_LABEL) if HIGH_RISK_LABEL in classes else -1
+                    risk_prob = proba[idx]
+                    s.disease = 1 if risk_prob >= 0.5 else 0
+                else:
+                    raw = int(clf.predict(scaled)[0])
+                    s.disease = 1 if raw == HIGH_RISK_LABEL else 0
+
                 s.predicted = True
                 go(4); st.rerun()
             except Exception as e:
@@ -699,14 +722,19 @@ elif s.slide == 4 and s.predicted:
     # ── Recommendations ──
     st.markdown('<div class="sec-label">Recommendations</div>', unsafe_allow_html=True)
     tips=[]
-    if sm_enc:              tips.append(("Smoking Cessation",    "Quitting smoking is the single most impactful change to lower both cost and disease risk."))
-    if float(s.bmi)>30:    tips.append(("Weight Management",    f"BMI of {float(s.bmi):.1f} is above healthy range. A structured plan can reduce risk significantly."))
-    if int(s.age)>50:      tips.append(("Routine Screenings",   "Annual health screenings are strongly advised for individuals above 50."))
-    if s.diabetes:         tips.append(("Diabetes Care",        "Regular blood glucose monitoring and strict medication adherence are essential."))
-    if s.hypertension:     tips.append(("Blood Pressure",       "Low sodium diet, stress management, and physician-guided treatment are key."))
-    if s.heart:            tips.append(("Cardiac Health",       "Heart-healthy diet and moderate, doctor-approved exercise are recommended."))
-    if s.asthma:           tips.append(("Respiratory Care",     "Keep rescue inhalers accessible and avoid known environmental triggers."))
-    if not tips:           tips.append(("Healthy Profile",      "Your indicators are in a healthy range. Maintain regular check-ups and a balanced lifestyle."))
+    if sm_enc:           tips.append(("Smoking Cessation",  "Quitting smoking is the single most impactful change to lower both cost and disease risk."))
+    if float(s.bmi)>30: tips.append(("Weight Management",  f"BMI of {float(s.bmi):.1f} is above the healthy range. A structured plan can reduce risk significantly."))
+    if int(s.age)>50:   tips.append(("Routine Screenings", "Annual health screenings are strongly advised for individuals above 50."))
+    if s.diabetes:      tips.append(("Diabetes Care",       "Regular blood glucose monitoring and strict medication adherence are essential."))
+    if s.hypertension:  tips.append(("Blood Pressure",      "Low sodium diet, stress management, and physician-guided treatment are key."))
+    if s.heart:         tips.append(("Cardiac Health",      "Heart-healthy diet and moderate, doctor-approved exercise are recommended."))
+    if s.asthma:        tips.append(("Respiratory Care",    "Keep rescue inhalers accessible and avoid known environmental triggers."))
+    # If model says low risk AND no conditions flagged — show positive message
+    if not tips:
+        if disease == 0:
+            tips.append(("Healthy Profile", "Your indicators are in a healthy range. Maintain regular check-ups and a balanced lifestyle."))
+        else:
+            tips.append(("General Wellness", "Even without specific conditions flagged, maintaining a healthy lifestyle helps reduce overall risk."))
 
     for title,body in tips:
         st.markdown(f"""
@@ -724,7 +752,6 @@ elif s.slide == 4 and s.predicted:
             go(0); st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.balloons()
     st.markdown("""
     <p style="text-align:center;font-size:0.68rem;color:var(--muted);margin-top:2rem;letter-spacing:0.8px;">
     MediPredict AI · For educational purposes only · Not a substitute for medical advice
